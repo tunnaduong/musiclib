@@ -102,7 +102,7 @@ if (isset($_POST['submit'])) {
             $json = file_get_contents("data.json");
             $obj = json_decode($json);
 
-            foreach ($obj->music_list as $song) {
+            foreach (array_reverse($obj->music_list) as $song) {
                 echo "<div style='margin: 10px 0;'>" . $song->name;
                 echo " | <a href='javascript:copyCommand(\"" . $song->path . "\");'>Copy lệnh</a> | <a href='" . $song->path . "'>Nghe thử</a></div>";
             }
