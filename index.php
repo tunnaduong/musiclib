@@ -76,6 +76,9 @@ if (isset($_POST['submit'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MusicLib - Thư viện nhạc cho bot Discord</title>
     <link rel="icon" type="image/png" href="./icon.png">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 </head>
 
 <body>
@@ -96,7 +99,7 @@ if (isset($_POST['submit'])) {
                 <button type=" submit" name="submit" style="margin-bottom: 20px">Tải lên</button>
             </form>
         </div>
-        <div style="border: 2px solid black;max-width: 500px;margin-top: 20px">
+        <div style="border: 2px solid black;max-width: 500px;margin: 20px 10px">
             <h3>Danh sách nhạc hiện có trên máy chủ</h3>
             <?php
             $json = file_get_contents("data.json");
