@@ -99,7 +99,7 @@ if (isset($_POST['submit'])) {
                 <button type=" submit" name="submit" style="margin-bottom: 20px">Tải lên</button>
             </form>
         </div>
-        <div style="border: 2px solid black;max-width: 500px;margin: 20px 10px">
+        <div style="border: 2px solid black;max-width: 500px;margin-top: 20px;padding: 10px;">
             <h3>Danh sách nhạc hiện có trên máy chủ</h3>
             <?php
             $json = file_get_contents("data.json");
