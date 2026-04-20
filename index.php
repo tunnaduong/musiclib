@@ -7,6 +7,8 @@
  */
 include_once("vn-slug.php");
 
+$err = $success = "";
+
 if (isset($_POST['submit'])) {
     $file = $_FILES['song_file'];
     $targetDir = "uploads/songs/";
