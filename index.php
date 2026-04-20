@@ -3,7 +3,7 @@
 /**
  * tunnaduong/musiclib
  * Copyright 2026 (c) Duong Tung Anh
- * Last modified: 1:58PM - 20/04/2026
+ * Last modified: 2:59PM - 20/04/2026
  */
 include_once("vn-slug.php");
 
@@ -115,6 +115,8 @@ if (isset($_POST['submit'])) {
             <br>
             Tâm Sự Hong? Discord Server
         </a>
+        <br>
+        <a href="https://github.com/tunnaduong/musiclib" target="_blank">GitHub</a>
     </center>
     <script>
         async function copyCommand(path) {
