@@ -3,7 +3,7 @@
 /**
  * tunnaduong/musiclib
  * Copyright 2026 (c) Duong Tung Anh
- * Last modified: 2:59PM - 20/04/2026
+ * Last modified: 4:52PM - 20/04/2026
  */
 include_once("vn-slug.php");
 
@@ -80,7 +80,8 @@ if (isset($_POST['submit'])) {
 
 <body>
     <center>
-        <h1>MusicLib - Thư viện nhạc cho bot Discord</h1>
+        <img src="./cat.png" alt="cute hong?">
+        <h1 style="margin:0">MusicLib - Thư viện nhạc cho bot Discord</h1>
         <h2>Dev by: Tùng Anh</h2>
         <div style="border: 2px solid black;max-width: 500px;">
             <h3>Upload nhạc lên máy chủ</h3>
