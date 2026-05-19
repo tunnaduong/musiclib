@@ -111,17 +111,22 @@ if (isset($_FILES['song_file'])) {
         <div style="border: 2px solid black;max-width: 500px;">
             <h3>Upload nhạc lên máy chủ</h3>
             <form id="uploadForm" enctype="multipart/form-data">
-                <input type="hidden" name="ajax" value="1">
-                <label for="song_name">Tên nhạc:</label>
-                <input type="text" id="song_name" name="song_name" required>
-                <br>
-                <br>
-                <label for="song_file">Chọn nhạc:</label>
-                <input id="song_file" type="file" name="song_file" accept=".mp3, .wav, .m4a" required>
-                <p id="msg_success" style="color: green"><?= $success ?></p>
-                <p id="msg_err" style="color: red"><?= $err ?></p>
-                <button type="submit" id="submitBtn" style="margin-bottom: 20px">Tải lên</button>
-            </form>
+    <input type="hidden" name="ajax" value="1">
+    <label for="song_name">Tên nhạc:</label>
+    <input type="text" id="song_name" name="song_name" required>
+    <br>
+    <br>
+    <label for="song_file">Chọn nhạc:</label>
+    <input id="song_file" type="file" name="song_file" accept=".mp3, .wav, .m4a" required>
+    
+    <div id="progressContainer" style="display: none; width: 100%; background-color: #f3f3f3; border: 1px solid #000; margin-top: 15px; height: 20px; text-align: center; position: relative;">
+        <div id="progressBar" style="width: 0%; height: 100%; background-color: #4CAF50; transition: width 0.1s ease;"></div>
+        <span id="progressText" style="position: absolute; width: 100%; left: 0; top: 0; font-size: 12px; font-weight: bold; line-height: 20px; color: #000;">0%</span>
+    </div>
+    <p id="msg_success" style="color: green"><?= $success ?></p>
+    <p id="msg_err" style="color: red"><?= $err ?></p>
+    <button type="submit" id="submitBtn" style="margin-bottom: 20px">Tải lên</button>
+</form>
         </div>
         <div style="border: 2px solid black;max-width: 500px;margin-top: 20px;padding: 0 20px;box-sizing: border-box;">
             <h3>Danh sách nhạc hiện có trên máy chủ</h3>
@@ -150,42 +155,83 @@ if (isset($_FILES['song_file'])) {
     <script>
         // xử lý upload bằng fetch để né lỗi timeout 524 cloudflare
         document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+    e.preventDefault();
+    
+    const form = this;
+    const formData = new FormData(form);
+    const submitBtn = document.getElementById('submitBtn');
+    const successText = document.getElementById('msg_success');
+    const errText = document.getElementById('msg_err');
+    
+    // Các phần tử thanh tiến độ mới thêm
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    // Reset trạng thái ban đầu
+    successText.innerText = "";
+    errText.innerHTML = "Đang kết nối và chuẩn bị đẩy file lên máy chủ... 🚀";
+    submitBtn.disabled = true;
+    
+    // Hiển thị thanh tiến độ, reset về 0%
+    progressContainer.style.display = "block";
+    progressBar.style.width = "0%";
+    progressText.innerText = "0%";
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '.', true);
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    // 🟢 ĐOẠN XỬ LÝ ĐẾM % TIẾN ĐỘ THỜI GIAN THỰC
+    xhr.upload.addEventListener('progress', function(e) {
+        if (e.lengthComputable) {
+            // Tính toán phần trăm dựa trên số byte đã gửi / tổng số byte
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
             
-            const form = this;
-            const formData = new FormData(form);
-            const submitBtn = document.getElementById('submitBtn');
-            const successText = document.getElementById('msg_success');
-            const errText = document.getElementById('msg_err');
+            // Cập nhật giao diện thanh tiến độ
+            progressBar.style.width = percentComplete + '%';
+            progressText.innerText = percentComplete + '%';
             
-            // clear thông báo cũ, đổi trạng thái nút
-            successText.innerText = "";
-            errText.innerHTML = "Đang tải file lên máy chủ, vui lòng đợi tí bro... Đừng tắt trang nhé 😎";
-            submitBtn.disabled = true;
-            
-            fetch('.', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
+            if (percentComplete < 100) {
+                errText.innerHTML = `Đang tải lên: <b>${percentComplete}%</b>. Bro nhớ giữ tab này nhé, nhảy app là ăn lỗi 524 liền đó! 😶‍🌫️`;
+            } else {
+                errText.innerHTML = "Đã đẩy file lên xong 100%! Đang đợi Server và Cloudflare xử lý/lưu file, đợi tí nha bro... ⏱️";
+            }
+        }
+    });
+
+    xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            try {
+                const data = JSON.parse(xhr.responseText);
                 if(data.status === 'success') {
                     alert("Ngon nghẻ rồi! " + data.msg);
-                    window.location.reload(); // reload để cập nhật bài mới vô danh sách
+                    window.location.reload();
                 } else {
                     errText.innerHTML = data.msg;
                     submitBtn.disabled = false;
+                    progressContainer.style.display = "none";
                 }
-            })
-            .catch(error => {
-                console.error("Lỗi:", error);
-                errText.innerHTML = "Vẫn dính lỗi gì đó rồi bro ơi, check log nginx hoặc console trình duyệt xem sao.";
+            } catch(e) {
+                errText.innerHTML = "Server trả về data lỗi hoặc bị Cloudflare chặn đứng rồi bro.";
                 submitBtn.disabled = false;
-            });
-        });
+                progressContainer.style.display = "none";
+            }
+        } else {
+            errText.innerHTML = "Lỗi kết nối server: " + xhr.status;
+            submitBtn.disabled = false;
+            progressContainer.style.display = "none";
+        }
+    };
+
+    xhr.onerror = function() {
+        errText.innerHTML = "Kết nối bị ngắt quãng! Có vẻ bro vừa chuyển app hoặc mạng chập chờn rồi. Thử lại và treo máy tí nhé 😢";
+        submitBtn.disabled = false;
+        progressContainer.style.display = "none";
+    };
+
+    xhr.send(formData);
+});
 
         async function copyCommand(path) {
             try {
