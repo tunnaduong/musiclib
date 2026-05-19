@@ -3,7 +3,7 @@
 /**
  * tunnaduong/musiclib
  * Copyright 2026 (c) Duong Tung Anh
- * Last modified: 4:52PM - 20/04/2026
+ * Last modified: 4:15AM - 20/05/2026
  */
 include_once("vn-slug.php");
 
@@ -28,8 +28,8 @@ if (isset($_POST['submit'])) {
     if (empty($songTitle))
         die("Ơ kìa, tên nhạc đâu rồi :D<br><a href='/'>Quay lại</a>");
 
-    // need to check if the file really is .mp3/.wav (songs file format)
-    $allowedTypes = ['mp3', 'wav'];
+    // need to check if the file really is .mp3/.wav/.m4a (songs file format)
+    $allowedTypes = ['mp3', 'wav', 'm4a'];
 
     if (!in_array($fileExt, $allowedTypes))
         die("Xin lỗi, định dạng file đếch hợp lệ :D. Chỉ chấp nhận: " . implode(', ', $allowedTypes) . "<br><a href='/'>Quay lại</a>");
@@ -91,7 +91,7 @@ if (isset($_POST['submit'])) {
                 <br>
                 <br>
                 <label for="song_file">Chọn nhạc:</label>
-                <input id="song_file" type="file" name="song_file" accept=".mp3, .wav" required>
+                <input id="song_file" type="file" name="song_file" accept=".mp3, .wav, .m4a" required>
                 <p style="color: green"><?= $success ?></p>
                 <p style="color: red"><?= $err ?></p>
                 <button type=" submit" name="submit" onclick="history.replaceState({}, '', document.referrer);" style="margin-bottom: 20px">Tải lên</button>
